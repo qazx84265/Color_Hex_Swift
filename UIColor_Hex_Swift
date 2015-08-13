@@ -1,0 +1,49 @@
+/*
+*  UIColor Extension
+*  Get color from hex string,like "0x123456" or "#666666"
+*/
+extension UIColor {
+    /**
+    Get color from hex string, like "0x123456" or "#666666"  or with alpha "0x123456ff"
+    
+    :param: hexString like "0x123456" or "#666666"
+    
+    :returns: 
+    */
+    public convenience init(hexString:NSString) {
+        var red:CGFloat   = 0.0
+        var green:CGFloat = 0.0
+        var blue:CGFloat  = 0.0
+        var alpha:CGFloat = 1.0
+        
+        
+        if hexString.length >= 6 {
+            var tempString:NSString = hexString.lowercaseString
+            if tempString.hasPrefix("0x") {
+                tempString = tempString.substringFromIndex(2)
+            } else if tempString.hasPrefix("#") {
+                tempString = tempString.substringFromIndex(1)
+            }
+            
+            if tempString.length >= 6 {
+                let scanner = NSScanner(string: tempString as String)
+                var hexValue:UInt64 = 0
+                if scanner.scanHexLongLong(&hexValue) {
+                    if tempString.length == 6 {
+                        red   = CGFloat((hexValue & 0xFF0000) >> 16)  / 255.0
+                        green = CGFloat((hexValue & 0x00FF00) >> 8) / 255.0
+                        blue  = CGFloat(hexValue & 0x0000FF)        / 255.0
+                    } else if tempString.length == 8 {
+                        red   = CGFloat((hexValue & 0xFF000000) >> 24)   / 255.0
+                        green = CGFloat((hexValue & 0x00FF0000) >> 16)   / 255.0
+                        blue  = CGFloat((hexValue & 0x0000FF00) >> 8)  / 255.0
+                        alpha = CGFloat(hexValue & 0x000000FF)         / 255.0
+                    }
+                }
+            }
+        }
+        
+        
+        self.init(red: red, green: green, blue: blue, alpha: alpha)
+    }
+}
